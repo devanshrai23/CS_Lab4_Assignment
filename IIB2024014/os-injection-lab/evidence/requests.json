@@ -1,0 +1,126 @@
+{
+  "captured_at_utc": "2026-10-27T12:19:38.417982+00:00",
+  "base_url": "http://127.0.0.1:8080",
+  "variant": "In-band OS command injection",
+  "payload": "welcome.txt; printf 'OS_INJECTION_CONFIRMED\\n'",
+  "checks": {
+    "baseline_http_200": true,
+    "baseline_digest_equal": true,
+    "exploit_http_200": true,
+    "exploit_marker_returned": true,
+    "identical_payload": true,
+    "mitigation_http_422": true,
+    "mitigation_blocks_output": true
+  },
+  "source_sha256": {
+    "app/server.py": "7d08677de8d815105c837a86b91259f915b820b59ff5708c2856143a79e72fce",
+    "app/static/index.html": "6d7d514a5257e1523401a53d6daadeac735bc7a9ada07255fed87dd28abcbfea",
+    "app/static/app.js": "67d7b3410a57edbbe373281d76f7e271954476271ff164679988e615e41524d5",
+    "app/static/style.css": "0751f0062711132c796850854ecc5f2aab7a331db28d172fd4c7e1f2bd9b4c24",
+    "Dockerfile": "d770cc03d338bd2edfd5fa5e3cd08533e2519f3c8995cfacbb7b3a768acc614f",
+    "compose.yaml": "e4be0ff48a95dd5754fddc963341099f97b43d6bd129afd10fc8ec3c6bedd3ac",
+    "tests/test_lab.py": "461f2c67dd0eaca5afc994259bbb0cad86c24471d0848e77b32879ab72f86d9b"
+  },
+  "requests": [
+    {
+      "request": {
+        "method": "POST",
+        "path": "/api/vulnerable",
+        "headers": {
+          "Content-Type": "application/json",
+          "X-Lab-Request": "1"
+        },
+        "body": {
+          "filename": "welcome.txt"
+        }
+      },
+      "http_status": 200,
+      "response": {
+        "status": "executed",
+        "stdout": "ee3db4b630b422887e3b8cc005771dd9042a35e7aa716d6f98ff7e7c18b16d30  welcome.txt\n",
+        "stderr": "",
+        "returncode": 0,
+        "execution": "/usr/bin/sha256sum -- welcome.txt",
+        "explanation": "A shell parsed the filename and returned command output.",
+        "mode": "vulnerable",
+        "filename": "welcome.txt",
+        "elapsed_ms": 10.89
+      }
+    },
+    {
+      "request": {
+        "method": "POST",
+        "path": "/api/secure",
+        "headers": {
+          "Content-Type": "application/json",
+          "X-Lab-Request": "1"
+        },
+        "body": {
+          "filename": "welcome.txt"
+        }
+      },
+      "http_status": 200,
+      "response": {
+        "status": "accepted",
+        "stdout": "ee3db4b630b422887e3b8cc005771dd9042a35e7aa716d6f98ff7e7c18b16d30  welcome.txt\n",
+        "stderr": "",
+        "returncode": 0,
+        "execution": "hashlib.sha256(sample_bytes).hexdigest()",
+        "explanation": "The checksum is computed by Python. There is no shell to interpret separators.",
+        "mode": "secure",
+        "filename": "welcome.txt",
+        "elapsed_ms": 0.24
+      }
+    },
+    {
+      "request": {
+        "method": "POST",
+        "path": "/api/vulnerable",
+        "headers": {
+          "Content-Type": "application/json",
+          "X-Lab-Request": "1"
+        },
+        "body": {
+          "filename": "welcome.txt; printf 'OS_INJECTION_CONFIRMED\\n'"
+        }
+      },
+      "http_status": 200,
+      "response": {
+        "status": "executed",
+        "stdout": "ee3db4b630b422887e3b8cc005771dd9042a35e7aa716d6f98ff7e7c18b16d30  welcome.txt\nOS_INJECTION_CONFIRMED\n",
+        "stderr": "",
+        "returncode": 0,
+        "execution": "/usr/bin/sha256sum -- welcome.txt; printf 'OS_INJECTION_CONFIRMED\\n'",
+        "explanation": "A shell parsed the filename and returned command output.",
+        "mode": "vulnerable",
+        "filename": "welcome.txt; printf 'OS_INJECTION_CONFIRMED\\n'",
+        "elapsed_ms": 8.18
+      }
+    },
+    {
+      "request": {
+        "method": "POST",
+        "path": "/api/secure",
+        "headers": {
+          "Content-Type": "application/json",
+          "X-Lab-Request": "1"
+        },
+        "body": {
+          "filename": "welcome.txt; printf 'OS_INJECTION_CONFIRMED\\n'"
+        }
+      },
+      "http_status": 422,
+      "response": {
+        "status": "blocked",
+        "stdout": "",
+        "stderr": "Unknown sample filename.",
+        "returncode": null,
+        "execution": "No shell or child process created.",
+        "explanation": "Only the three sample filenames are accepted. Input is never evaluated as shell syntax.",
+        "mode": "secure",
+        "filename": "welcome.txt; printf 'OS_INJECTION_CONFIRMED\\n'",
+        "elapsed_ms": 0.01
+      }
+    }
+  ]
+}

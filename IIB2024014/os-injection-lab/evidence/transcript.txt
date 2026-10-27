@@ -1,0 +1,79 @@
+CHECKSUM LAB - REPRODUCIBLE HTTP EVIDENCE
+Captured: 2026-10-27T12:19:38.417982+00:00
+Payload: welcome.txt; printf 'OS_INJECTION_CONFIRMED\n'
+
+POST /api/vulnerable
+Content-Type: application/json
+X-Lab-Request: 1
+{"filename": "welcome.txt"}
+HTTP 200
+{
+  "status": "executed",
+  "stdout": "ee3db4b630b422887e3b8cc005771dd9042a35e7aa716d6f98ff7e7c18b16d30  welcome.txt\n",
+  "stderr": "",
+  "returncode": 0,
+  "execution": "/usr/bin/sha256sum -- welcome.txt",
+  "explanation": "A shell parsed the filename and returned command output.",
+  "mode": "vulnerable",
+  "filename": "welcome.txt",
+  "elapsed_ms": 10.89
+}
+
+POST /api/secure
+Content-Type: application/json
+X-Lab-Request: 1
+{"filename": "welcome.txt"}
+HTTP 200
+{
+  "status": "accepted",
+  "stdout": "ee3db4b630b422887e3b8cc005771dd9042a35e7aa716d6f98ff7e7c18b16d30  welcome.txt\n",
+  "stderr": "",
+  "returncode": 0,
+  "execution": "hashlib.sha256(sample_bytes).hexdigest()",
+  "explanation": "The checksum is computed by Python. There is no shell to interpret separators.",
+  "mode": "secure",
+  "filename": "welcome.txt",
+  "elapsed_ms": 0.24
+}
+
+POST /api/vulnerable
+Content-Type: application/json
+X-Lab-Request: 1
+{"filename": "welcome.txt; printf 'OS_INJECTION_CONFIRMED\\n'"}
+HTTP 200
+{
+  "status": "executed",
+  "stdout": "ee3db4b630b422887e3b8cc005771dd9042a35e7aa716d6f98ff7e7c18b16d30  welcome.txt\nOS_INJECTION_CONFIRMED\n",
+  "stderr": "",
+  "returncode": 0,
+  "execution": "/usr/bin/sha256sum -- welcome.txt; printf 'OS_INJECTION_CONFIRMED\\n'",
+  "explanation": "A shell parsed the filename and returned command output.",
+  "mode": "vulnerable",
+  "filename": "welcome.txt; printf 'OS_INJECTION_CONFIRMED\\n'",
+  "elapsed_ms": 8.18
+}
+
+POST /api/secure
+Content-Type: application/json
+X-Lab-Request: 1
+{"filename": "welcome.txt; printf 'OS_INJECTION_CONFIRMED\\n'"}
+HTTP 422
+{
+  "status": "blocked",
+  "stdout": "",
+  "stderr": "Unknown sample filename.",
+  "returncode": null,
+  "execution": "No shell or child process created.",
+  "explanation": "Only the three sample filenames are accepted. Input is never evaluated as shell syntax.",
+  "mode": "secure",
+  "filename": "welcome.txt; printf 'OS_INJECTION_CONFIRMED\\n'",
+  "elapsed_ms": 0.01
+}
+
+PASS  baseline_http_200
+PASS  baseline_digest_equal
+PASS  exploit_http_200
+PASS  exploit_marker_returned
+PASS  identical_payload
+PASS  mitigation_http_422
+PASS  mitigation_blocks_output

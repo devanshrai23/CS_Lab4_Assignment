@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Checksum Lab · OS Command Injection</title>
+  <link rel="stylesheet" href="/style.css"><script src="/app.js" defer></script>
+</head>
+<body>
+<aside class="sidebar">
+  <a class="brand" href="#experiment"><span class="brand-mark">[c]</span><span>checksum<span class="brand-light">lab</span></span></a>
+  <div class="sidebar-label">SECURITY FIELD NOTES</div>
+  <nav aria-label="Main navigation">
+    <a class="active" href="#experiment"><span>01</span>The experiment</a>
+    <a href="#fix"><span>02</span>The fix</a>
+    <a href="#defenses"><span>03</span>Defense notes</a>
+  </nav>
+  <div class="scope-note"><span class="live-dot"></span>LOCAL TEACHING LAB<p>Intentionally vulnerable.<br>Test only this application.</p></div>
+  <div class="sidebar-owner"><span>BUILT FOR</span><strong>Manas Singh</strong><code>IIB2024014</code><small>IT-30001 · IIIT Allahabad<br>Autumn 2026</small></div>
+</aside>
+<main>
+  <header><span>WEB SERVER SECURITY <b>/</b> OS COMMAND INJECTION</span><span class="pill">VARIANT 01 · IN-BAND</span></header>
+  <section class="hero" id="experiment">
+    <div><div class="eyebrow"><span></span> A SMALL INPUT. A DIFFERENT INSTRUCTION.</div>
+    <h1>When a filename<br>becomes a command.</h1>
+    <p class="intro">One checksum tool. Two implementations. Send the same input to both and see where the trust boundary breaks.</p></div>
+    <div class="flow-card" aria-label="Injection flow"><span class="flow-label">THE VULNERABLE PATH</span><div class="flow-row"><span>01</span>Filename input</div><div class="flow-line"></div><div class="flow-row red"><span>02</span>Shell interpretation <b>!</b></div><div class="flow-line"></div><div class="flow-row"><span>03</span>Command output</div><div class="flow-caption">Untrusted data crosses into executable syntax.</div></div>
+  </section>
+  <div class="metadata"><div><span>CATEGORY</span><strong>OS command injection</strong></div><div><span>OBSERVATION</span><strong>Output in the HTTP response</strong></div><div><span>PRIMARY FIX</span><strong>Replace shell with hashlib</strong></div><span class="cwe">CWE-78 ↗</span></div>
+  <section class="experiment-panel" aria-labelledby="input-title">
+    <div class="section-top"><div><span class="section-number">01</span><h2 id="input-title">Try the same input</h2></div><span class="subtle">POST /api/{vulnerable,secure}</span></div>
+    <form id="lab-form"><label for="filename">Sample filename <span>or a filename followed by a harmless injected command</span></label>
+      <div class="input-row"><textarea id="filename" name="filename" rows="1" maxlength="256" required spellcheck="false">welcome.txt</textarea><button class="run-button" id="run-button" type="submit">Run comparison <span>↗</span></button></div>
+      <div class="presets"><span>LOAD INPUT</span><button type="button" id="load-normal">Normal filename</button><button type="button" id="load-payload">Injection payload <span>+ printf</span></button><button type="button" id="copy-input">Copy input</button></div>
+      <p class="input-help">Available files: <code>welcome.txt</code> · <code>release-notes.txt</code> · <code>invoices.csv</code></p>
+    </form>
+    <p id="request-message" class="request-message" role="status" aria-live="polite">Ready. Start with a normal filename, then load the injection payload.</p>
+  </section>
+  <section class="results" aria-label="Live comparison results">
+    <article class="result-card vulnerable" id="vulnerable-card"><div class="result-heading"><div><span class="route-number">A</span><h3>Vulnerable version</h3></div><span id="vulnerable-status" class="status">AWAITING REQUEST</span></div><div class="implementation">User input + shell=True</div>
+      <div class="terminal"><div class="terminal-top"><span>STDOUT / STDERR</span><span id="vulnerable-time">—</span></div><pre id="vulnerable-output">Run a request to inspect the server's response.</pre></div>
+      <div class="execution"><span>EXECUTION PATH</span><code id="vulnerable-execution">sha256sum -- &lt;user input&gt;</code></div><p id="vulnerable-explanation">Shell metacharacters can change what the server executes.</p>
+    </article>
+    <article class="result-card secure" id="secure-card"><div class="result-heading"><div><span class="route-number">B</span><h3>Secured version</h3></div><span id="secure-status" class="status">AWAITING REQUEST</span></div><div class="implementation">Native library + exact filename allow-list</div>
+      <div class="terminal"><div class="terminal-top"><span>STDOUT / VALIDATION</span><span id="secure-time">—</span></div><pre id="secure-output">Run a request to inspect the server's response.</pre></div>
+      <div class="execution"><span>EXECUTION PATH</span><code id="secure-execution">hashlib.sha256(sample_bytes)</code></div><p id="secure-explanation">No OS command is constructed. Input stays data.</p>
+    </article>
+  </section>
+  <section class="fix-panel" id="fix"><div class="fix-copy"><div class="eyebrow">02 / THE FIX</div><h2>Remove the interpreter.</h2><p>The vulnerable version concatenates the filename into a command string. The shell treats <code>;</code> as a command separator and executes <code>printf</code> next.</p><p>The secured version uses Python's hashing library. An exact allow-list also limits file access to the three teaching samples.</p></div><div class="code-diff"><div class="code-block before"><span>BEFORE · SHELL EXECUTION</span><pre>command = f"sha256sum -- {filename}"
+subprocess.Popen(command, shell=True, ...)</pre></div><div class="code-block after"><span>AFTER · NATIVE LIBRARY</span><pre>if filename not in ALLOWED_FILES:
+    return blocked_response
+digest = hashlib.sha256(
+    (SAMPLES / filename).read_bytes()
+).hexdigest()</pre></div></div></section>
+  <section class="defenses" id="defenses"><div class="section-top"><div><span class="section-number">03</span><h2>Other defenses to explain</h2></div><span class="subtle">VIVA NOTES</span></div><div class="defense-grid"><article><span>01 / ARGUMENT VECTOR</span><h3>Keep code and arguments apart.</h3><p>If a process is unavoidable, pass a fixed executable and a list of arguments with <code>shell=False</code>. Check for option injection too.</p></article><article><span>02 / ALLOW-LIST</span><h3>Accept only expected values.</h3><p>Validate on the server against a narrow set of filenames or identifiers. A blacklist of a few shell symbols is incomplete.</p></article><article><span>03 / LEAST PRIVILEGE</span><h3>Limit what a process can reach.</h3><p>Run as a non-root user with restricted files and network access. This reduces impact; it does not repair command construction.</p></article></div></section>
+  <footer><span>CHECKSUM LAB <b>·</b> OS COMMAND INJECTION</span><span>Manas Singh / IIB2024014 <b>·</b> IT-30001</span></footer>
+</main>
+</body></html>

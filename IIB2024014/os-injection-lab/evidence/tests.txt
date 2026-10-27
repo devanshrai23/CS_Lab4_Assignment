@@ -1,0 +1,20 @@
+ Container os-injection-lab-lab-run-ed013a7a35f7 Creating
+ Container os-injection-lab-lab-run-ed013a7a35f7 Created
+test_alternative_shell_syntax_and_paths_are_rejected (test_lab.ChecksumTests.test_alternative_shell_syntax_and_paths_are_rejected) ... ok
+test_bad_input_types_and_lengths_are_rejected (test_lab.ChecksumTests.test_bad_input_types_and_lengths_are_rejected) ... ok
+test_identical_exploit_is_blocked_without_starting_process (test_lab.ChecksumTests.test_identical_exploit_is_blocked_without_starting_process) ... ok
+test_in_band_exploit_executes_second_command (test_lab.ChecksumTests.test_in_band_exploit_executes_second_command) ... ok
+test_long_running_injected_command_times_out (test_lab.ChecksumTests.test_long_running_injected_command_times_out) ... ok
+test_normal_filenames_keep_the_same_behavior (test_lab.ChecksumTests.test_normal_filenames_keep_the_same_behavior) ... ok
+test_valid_secure_request_also_never_starts_a_process (test_lab.ChecksumTests.test_valid_secure_request_also_never_starts_a_process) ... ok
+test_cross_origin_cannot_reach_vulnerable_sink (test_lab.HTTPTests.test_cross_origin_cannot_reach_vulnerable_sink) ... ok
+test_non_object_json_is_rejected (test_lab.HTTPTests.test_non_object_json_is_rejected) ... ok
+test_plain_form_request_cannot_execute_commands (test_lab.HTTPTests.test_plain_form_request_cannot_execute_commands) ... ok
+test_real_http_exploit_and_fix_use_identical_body (test_lab.HTTPTests.test_real_http_exploit_and_fix_use_identical_body) ... ok
+test_rebinding_host_is_rejected (test_lab.HTTPTests.test_rebinding_host_is_rejected) ... ok
+test_static_files_are_explicit_and_have_security_headers (test_lab.HTTPTests.test_static_files_are_explicit_and_have_security_headers) ... ok
+
+----------------------------------------------------------------------
+Ran 13 tests in 2.601s
+
+OK

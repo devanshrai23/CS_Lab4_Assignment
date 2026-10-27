@@ -1,0 +1,2 @@
+Welcome to Checksum Lab.
+This is a synthetic teaching file for the OS command injection assignment.

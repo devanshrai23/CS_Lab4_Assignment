@@ -1,0 +1,24 @@
+name: OS command injection regression tests
+on:
+  push:
+    paths:
+      - 'IIB2024014/**'
+      - '.github/workflows/os-command-injection.yml'
+  pull_request:
+    paths:
+      - 'IIB2024014/**'
+      - '.github/workflows/os-command-injection.yml'
+jobs:
+  lab:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: IIB2024014/os-injection-lab
+    steps:
+      - uses: actions/checkout@v4
+      - run: docker build -t os-injection-lab:ci .
+      - run: >-
+          docker run --rm --network none --read-only --cap-drop ALL
+          --security-opt no-new-privileges --pids-limit 48 --memory 128m
+          --tmpfs /tmp:rw,noexec,nosuid,size=16m
+          os-injection-lab:ci python -m unittest discover -s tests -v

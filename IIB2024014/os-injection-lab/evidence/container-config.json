@@ -1,0 +1,1 @@
+{"user":"10001:10001","read_only":true,"cap_drop":["ALL"],"security_opt":["no-new-privileges:true"],"memory_bytes":134217728,"pids_limit":48,"port_bindings":{"8080/tcp":[{"HostIp":"127.0.0.1","HostPort":"8080"}]},"bind_mounts":null,"image":"sha256:5f6e8115c13b4b6611c1321f4945988d7c8de53b592d92faaf503051a6bf4b04"}

@@ -1,0 +1,3 @@
+Checksum Lab v1.0
+- Compare shell-based and native-library checksum implementations.
+- All sample data is synthetic.
