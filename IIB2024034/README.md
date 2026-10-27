@@ -55,7 +55,7 @@ const rows = stmt.all(username, password);
 
 ---
 
-## Theory: The 4 SQL Injection Techniques
+## Theory: SQL Injection Techniques
 
 Required knowledge for the viva oral examination:
 
