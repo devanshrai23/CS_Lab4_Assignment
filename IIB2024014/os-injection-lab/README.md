@@ -128,7 +128,7 @@ The application requires the custom header and JSON content type, rejects cross-
 docker compose run --rm --no-deps lab python -m unittest discover -s tests -v
 ```
 
-The 13 regression tests cover matching checksums for all three samples, actual shell exploitation, the identical blocked payload, no process creation by the fixed route, alternative metacharacters, invalid paths and input types, a command timeout, real HTTP behavior, origin/Host protections, and static-file restrictions. The group repository's root workflow, `.github/workflows/os-command-injection.yml`, builds this project and runs the suite with networking disabled. Local results are in `evidence/tests.txt`.
+The 13 regression tests cover matching checksums for all three samples, actual shell exploitation, the identical blocked payload, no process creation by the fixed route, alternative metacharacters, invalid paths and input types, a command timeout, real HTTP behavior, origin/Host protections, and static-file restrictions. Local results are in `evidence/tests.txt`.
 
 ## Source layout
 
@@ -141,7 +141,6 @@ scripts/verify.py              Reproducible HTTP evidence capture
 compose.yaml / Dockerfile      Local container runtime
 evidence/                      Actual requests, output, screenshots, test results
 OS-Command-Injection-Report.pdf Explanation, evidence, narration script, viva preparation
-../../.github/workflows/os-command-injection.yml  Container-based CI
 ```
 
 ## Finish the submission

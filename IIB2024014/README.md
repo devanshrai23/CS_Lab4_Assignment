@@ -29,6 +29,5 @@ This intentionally vulnerable teaching application is published as source code. 
 - [Exact HTTP requests and results](os-injection-lab/evidence/requests.json)
 - [Successful exploit and identical blocked payload](os-injection-lab/evidence/03-comparison-detail.jpg)
 - [Google Docs report section](Google-Docs-Report-Section.md)
-- [Screen-by-screen recording guide, about 2 minutes 50 seconds](Recording-Guide.md)
 
 The required video must contain Manas's own voice-over and show the vulnerable source, exact working payload, root cause, implemented fix, and the same payload failing, in roughly 2-3 minutes. A video is not included until it has actually been recorded.
